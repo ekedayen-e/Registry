@@ -19,17 +19,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use("/api", routes)
 
-app.get('/', (req, res, next) => {
+if(process.env.ENV === 'prod'){
+    app.use(express.static('..client/build'));
+    const path = require('path');
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            name: 'name of your app',
-            version: '0.1.0'
-        }
-    });
-
-});
+    app.get('/', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    })
+}
 app.use((err, req, res, next) => {
     console.log(err);
     next();
