@@ -6,6 +6,7 @@ const routes = require("./routes/api")
 require('dotenv').config({path:"./config.env"})
 let app = express()
 const port = process.env.PORT || 3001
+const path = require('path')
 
 mongoose
     .connect(process.env.DB, { useNewUrlParser: true })
@@ -19,14 +20,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use("/api", routes)
 
-if(process.env.ENV === 'prod'){
-    app.use(express.static('..client/build'));
-    const path = require('path');
-
-    app.get('/', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-    })
-}
+app.get("/", (req,res) => {
+    res.sendFile(res.sendFile(path.join(__dirname, "../client/build/index.html")))
+})
 app.use((err, req, res, next) => {
     console.log(err);
     next();
